@@ -1,0 +1,117 @@
+NAME,COUNTRY,is_test_ar,is_odi_ar,is_t20_ar
+Laura Marsh,England,False,False,True
+Moeen Ali,England,True,False,False
+Nattaya Boochatham,Thailand,False,False,True
+Mohammad Nabi,Afghanistan,False,True,True
+Samiullah Shinwari,Afghanistan,False,False,True
+Isobel Joyce,Ireland,False,False,True
+Mashrafe Mortaza,Bangladesh,False,False,True
+Mahmudullah,Bangladesh,False,False,True
+Rumana Ahmed,Bangladesh,False,False,True
+Shakib Al Hasan,Bangladesh,True,True,True
+Salma Khatun,Bangladesh,False,False,True
+Steve Tikolo,Kenya,False,True,False
+Amjad Javed,United Arab Emirates,False,False,True
+Chamani Seneviratna,United Arab Emirates,False,False,True
+Laura Delany,Ireland,False,False,True
+Kim Garth,Ireland,False,False,True
+Kevin O'Brien,Ireland,False,True,True
+Heath Streak,Zimbabwe,False,True,False
+Stafanie Taylor,West Indies,False,True,True
+Nathan Astle,New Zealand,False,True,False
+Nicola Browne,New Zealand,False,True,True
+Suzie Bates,New Zealand,False,False,True
+Chris Cairns,New Zealand,True,True,False
+Sophie Devine,New Zealand,False,False,True
+Chris Harris,New Zealand,False,True,False
+Sir Richard Hadlee,New Zealand,True,False,False
+Nathan McCullum,New Zealand,False,False,True
+Scott Styris,New Zealand,False,True,False
+Daniel Vettori,New Zealand,True,False,False
+Ravichandran Ashwin,India,True,False,False
+Jhulan Goswami,India,False,False,True
+Sourav Ganguly,India,False,True,False
+Harmanpreet Kaur,India,False,False,True
+Ravindra Jadeja,India,True,True,False
+Kapil Dev,India,True,False,False
+Vinoo Mankad,India,True,False,False
+Ravi Shastri,India,True,True,False
+Anuja Patil,India,False,False,True
+Irfan Pathan,India,True,False,False
+Virender Sehwag,India,False,True,False
+Hardik Pandya,India,False,False,True
+Sachin Tendulkar,India,False,True,False
+Asmavia Iqbal,Pakistan,False,False,True
+Abdul Razzaq,Pakistan,True,True,False
+Aamer Sohail,Pakistan,False,True,False
+Yuvraj Singh,India,False,True,True
+Bismah Maroof,Pakistan,False,False,True
+Imran Khan,Pakistan,True,True,False
+Mudassar Nazar,Pakistan,False,True,False
+Mohammad Hafeez,Pakistan,False,True,True
+Nida Dar,Pakistan,False,False,True
+Shoaib Malik,Pakistan,False,True,True
+Shahid Afridi,Pakistan,False,False,True
+Sana Mir,Pakistan,False,False,True
+Saleem Malik,Pakistan,False,True,False
+Tillakaratne Dilshan,Sri Lanka,False,True,False
+Aravinda de Silva,Sri Lanka,False,True,False
+Sanath Jayasuriya,Sri Lanka,False,True,False
+Eshani Lokusuriyage,Sri Lanka,False,False,True
+Angelo Mathews,Sri Lanka,False,True,True
+Thisara Perera,Sri Lanka,False,False,True
+Shashikala Siriwardene,Sri Lanka,False,False,True
+Elton Chigumbura,Zimbabwe,False,True,False
+Grant Flower,Zimbabwe,False,True,False
+Darren Sammy,West Indies,False,False,True
+Katherine Brunt,England,False,False,True
+Sir Ian Botham,England,True,False,False
+Trevor Bailey,England,True,False,False
+Paul Collingwood,England,False,True,False
+Jenny Gunn,England,False,False,True
+Tony Greig,England,True,False,False
+Andrew Flintoff,England,True,True,False
+Ben Stokes,England,True,False,False
+Wilfred Rhodes,England,True,False,False
+Natalie Sciver,England,False,False,True
+Maurice Tate,England,True,False,False
+Danielle Wyatt,England,False,False,True
+Chris Woakes,England,False,True,False
+James Faulkner,Australia,False,True,False
+Keith Miller,Australia,True,False,False
+Jess Jonassen,Australia,False,False,True
+Glenn Maxwell,Australia,False,False,True
+Monty Noble,Australia,True,False,False
+Shelley Nitschke,Australia,False,True,True
+Simon O'Donnell,Australia,False,True,False
+Ellyse Perry,Australia,False,True,True
+Andrew Symonds,Australia,False,True,False
+Karen Rolton,Australia,False,True,False
+Lisa Sthalekar,Australia,False,True,True
+Steve Waugh,Australia,False,True,False
+Mark Waugh,Australia,False,True,False
+Shane Watson,Australia,False,True,True
+Nicky Boje,South Africa,True,True,False
+Hansie Cronje,South Africa,False,True,False
+Trevor Goddard,South Africa,True,False,False
+Albie Morkel,South Africa,False,False,True
+Lance Klusener,South Africa,False,True,False
+Marizanne Kapp,South Africa,False,True,True
+Jacques Kallis,South Africa,True,True,False
+Sune Luus,South Africa,False,False,True
+Shaun Pollock,South Africa,True,True,False
+Dane van Niekerk,South Africa,False,True,True
+Dwayne Bravo,West Indies,False,True,True
+Carlos Brathwaite,West Indies,False,False,True
+Shemaine Campbelle,West Indies,False,False,True
+Deandra Dottin,West Indies,False,False,True
+Shanel Daley,West Indies,False,False,True
+Chris Gayle,West Indies,False,True,False
+Carl Hooper,West Indies,True,True,False
+Jason Holder,West Indies,False,True,False
+Hayley Matthews,West Indies,False,False,True
+Andre Russell,West Indies,False,False,True
+Sir Viv Richards,West Indies,False,True,False
+Sir Garry Sobers,West Indies,True,False,False
+Phil Simmons,West Indies,False,True,False
+Marlon Samuels,West Indies,False,True,False

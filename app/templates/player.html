@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container player-profile">
+    <h1>{{ player.NAME }} <small>{{ player.COUNTRY }}</small></h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Batting</h3>
+            <table class="table">
+                <tr><th>Format</th><th>Matches</th><th>Runs</th><th>Average</th><th>SR</th></tr>
+                <tr><td>Tests</td><td>{{ player.BATTING_Tests_Mat }}</td>
+                    <td>{{ player.BATTING_Tests_Runs }}</td>
+                    <td>{{ player.BATTING_Tests_Ave }}</td>
+                    <td>-</td></tr>
+                <tr><td>ODIs</td><td>{{ player.BATTING_ODIs_Mat }}</td>
+                    <td>{{ player.BATTING_ODIs_Runs }}</td>
+                    <td>{{ player.BATTING_ODIs_Ave }}</td>
+                    <td>{{ player.BATTING_ODIs_SR }}</td></tr>
+                <tr><td>T20s</td><td>{{ player.BATTING_T20Is_Mat }}</td>
+                    <td>{{ player.BATTING_T20Is_Runs }}</td>
+                    <td>{{ player.BATTING_T20Is_Ave }}</td>
+                    <td>{{ player.BATTING_T20Is_SR }}</td></tr>
+            </table>
+        </div>
+        
+        <div class="col-md-6">
+            <h3>Bowling</h3>
+            <table class="table">
+                <tr><th>Format</th><th>Matches</th><th>Wickets</th><th>Average</th><th>Econ</th></tr>
+                <tr><td>Tests</td><td>{{ player.BOWLING_Tests_Mat }}</td>
+                    <td>{{ player.BOWLING_Tests_Wkts }}</td>
+                    <td>{{ player.BOWLING_Tests_Ave }}</td>
+                    <td>{{ player.BOWLING_Tests_Econ }}</td></tr>
+                <tr><td>ODIs</td><td>{{ player.BOWLING_ODIs_Mat }}</td>
+                    <td>{{ player.BOWLING_ODIs_Wkts }}</td>
+                    <td>{{ player.BOWLING_ODIs_Ave }}</td>
+                    <td>{{ player.BOWLING_ODIs_Econ }}</td></tr>
+                <tr><td>T20s</td><td>{{ player.BOWLING_T20Is_Mat }}</td>
+                    <td>{{ player.BOWLING_T20Is_Wkts }}</td>
+                    <td>{{ player.BOWLING_T20Is_Ave }}</td>
+                    <td>{{ player.BOWLING_T20Is_Econ }}</td></tr>
+            </table>
+        </div>
+    </div>
+    
+    {% if player.is_allrounder %}
+    <div class="alert alert-success">All-Rounder Status: Confirmed</div>
+    {% endif %}
+</div>
+{% endblock %}
