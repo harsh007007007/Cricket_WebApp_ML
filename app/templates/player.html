@@ -2,45 +2,67 @@
 
 {% block content %}
 <div class="container player-profile">
-    <h1>{{ player.NAME }} <small>{{ player.COUNTRY }}</small></h1>
-    
+    <div class="player-header mb-4 p-3 bg-light rounded">
+        <h1>{{ player.NAME }} <small class="text-muted">{{ player.COUNTRY }}</small></h1>
+        <p class="text-muted">{{ player.Playing_Role }}</p>
+        
+        {% if clusters %}
+        <div class="badge bg-info">Cluster #{{ clusters }}</div>
+        {% endif %}
+    </div>
+
     <div class="row">
         <div class="col-md-6">
-            <h3>Batting</h3>
-            <table class="table">
-                <tr><th>Format</th><th>Matches</th><th>Runs</th><th>Average</th><th>SR</th></tr>
-                <tr><td>Tests</td><td>{{ player.BATTING_Tests_Mat }}</td>
-                    <td>{{ player.BATTING_Tests_Runs }}</td>
-                    <td>{{ player.BATTING_Tests_Ave }}</td>
-                    <td>-</td></tr>
-                <tr><td>ODIs</td><td>{{ player.BATTING_ODIs_Mat }}</td>
-                    <td>{{ player.BATTING_ODIs_Runs }}</td>
-                    <td>{{ player.BATTING_ODIs_Ave }}</td>
-                    <td>{{ player.BATTING_ODIs_SR }}</td></tr>
-                <tr><td>T20s</td><td>{{ player.BATTING_T20Is_Mat }}</td>
-                    <td>{{ player.BATTING_T20Is_Runs }}</td>
-                    <td>{{ player.BATTING_T20Is_Ave }}</td>
-                    <td>{{ player.BATTING_T20Is_SR }}</td></tr>
-            </table>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Batting</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <!-- Existing batting table -->
+                    </table>
+                </div>
+            </div>
         </div>
         
         <div class="col-md-6">
-            <h3>Bowling</h3>
-            <table class="table">
-                <tr><th>Format</th><th>Matches</th><th>Wickets</th><th>Average</th><th>Econ</th></tr>
-                <tr><td>Tests</td><td>{{ player.BOWLING_Tests_Mat }}</td>
-                    <td>{{ player.BOWLING_Tests_Wkts }}</td>
-                    <td>{{ player.BOWLING_Tests_Ave }}</td>
-                    <td>{{ player.BOWLING_Tests_Econ }}</td></tr>
-                <tr><td>ODIs</td><td>{{ player.BOWLING_ODIs_Mat }}</td>
-                    <td>{{ player.BOWLING_ODIs_Wkts }}</td>
-                    <td>{{ player.BOWLING_ODIs_Ave }}</td>
-                    <td>{{ player.BOWLING_ODIs_Econ }}</td></tr>
-                <tr><td>T20s</td><td>{{ player.BOWLING_T20Is_Mat }}</td>
-                    <td>{{ player.BOWLING_T20Is_Wkts }}</td>
-                    <td>{{ player.BOWLING_T20Is_Ave }}</td>
-                    <td>{{ player.BOWLING_T20Is_Econ }}</td></tr>
-            </table>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Bowling</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <!-- Existing bowling table -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New ML Insights Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Performance Insights</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Similar Players</h5>
+                    <div class="list-group">
+                        {% for p in similar_players %}
+                        <a href="/player/{{ p.NAME }}" class="list-group-item list-group-item-action">
+                            {{ p.NAME }} ({{ p.COUNTRY }})
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="viz-container">
+                        <iframe src="{{ url_for('viz_files', filename='player_' + player.NAME + '_cluster.html') }}" 
+                                style="width:100%; height:300px; border:none;"></iframe>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     

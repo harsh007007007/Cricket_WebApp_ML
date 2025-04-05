@@ -2,25 +2,55 @@
 
 {% block content %}
 <div class="container">
-    <h1>{{ format|upper }} Cricket Analysis</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ format|upper }} Cricket Analysis</h1>
+        <div class="btn-group">
+            <a href="/analysis/test" class="btn btn-outline-primary {% if format == 'test' %}active{% endif %}">Test</a>
+            <a href="/analysis/odi" class="btn btn-outline-primary {% if format == 'odi' %}active{% endif %}">ODI</a>
+            <a href="/analysis/t20" class="btn btn-outline-primary {% if format == 't20' %}active{% endif %}">T20</a>
+        </div>
+    </div>
     
     {% for viz in viz_files %}
-    <div class="viz-container">
-        <iframe src="{{ url_for('static', filename='viz/' + viz) }}" 
-                frameborder="0" 
-                style="width:100%; height:500px"></iframe>
+    <div class="viz-container mb-4">
+        <iframe src="{{ url_for('viz_files', filename=viz) }}" 
+                style="width:100%; height:500px; border:none;"></iframe>
     </div>
     {% endfor %}
     
+    <!-- New Top Performers Section -->
     <div class="row">
-        <div class="col-md-4">
-            <a href="/analysis/test" class="btn btn-primary">Test Cricket</a>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Top {{ format|upper }} Batsmen</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for player in top_performers.batsmen %}
+                        <li class="list-group-item">
+                            <a href="/player/{{ player }}">{{ player }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <a href="/analysis/odi" class="btn btn-primary">ODI Analysis</a>
-        </div>
-        <div class="col-md-4">
-            <a href="/analysis/t20" class="btn btn-primary">T20 Analysis</a>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Top {{ format|upper }} Bowlers</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for player in top_performers.bowlers %}
+                        <li class="list-group-item">
+                            <a href="/player/{{ player }}">{{ player }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
