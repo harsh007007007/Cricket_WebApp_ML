@@ -1,7 +1,32 @@
 {% extends "base.html" %}
 
+{# Macros to format numbers and best bowling figures #}
+{% macro format_stat(value) %}
+    {%- set v = value|float %}
+    {%- if v != v %}
+         N/A
+    {%- else %}
+         {%- if v == v|round(0, 'floor') %}
+              {{ v|int }}
+         {%- else %}
+              {{ v|round(2) }}
+         {%- endif %}
+    {%- endif %}
+{% endmacro %}
+
+{% macro best_bowling(wickets, runs) %}
+    {%- set wk = (wickets|float) if (wickets is not none) else 0 %}
+    {%- set rn = (runs|float) if (runs is not none) else 0 %}
+    {%- if wk == 0 %}
+         -
+    {%- else %}
+         {{ wk|int }}/{{ rn|int }}
+    {%- endif %}
+{% endmacro %}
+
 {% block content %}
 <div class="container player-profile">
+    <!-- Player Bio Header -->
     <div class="player-header mb-4 p-3 bg-light rounded">
         <h1>{{ player.NAME }} <small class="text-muted">{{ player.COUNTRY }}</small></h1>
         <p class="text-muted">{{ player['Playing role'] }}</p>
@@ -30,50 +55,233 @@
         {% endif %}
     </div>
 
-    <!-- Batting / Bowling Stats -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header"><h3>Batting</h3></div>
-                <div class="card-body">
-                    <table class="table">
-                        <tr>
-                            <th>Tests Runs</th>
-                            <td>{{ player.BATTING_Tests_Runs }}</td>
-                        </tr>
-                        <tr>
-                            <th>ODI Runs</th>
-                            <td>{{ player.BATTING_ODIs_Runs }}</td>
-                        </tr>
-                        <tr>
-                            <th>T20I Runs</th>
-                            <td>{{ player.BATTING_T20Is_Runs }}</td>
-                        </tr>
-                        <!-- Add more batting stats as needed -->
-                    </table>
-                </div>
-            </div>
+    <!-- Stats Tabs -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="statsTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="test-tab" data-bs-toggle="tab" href="#test" role="tab" aria-controls="test" aria-selected="true">Test</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="odi-tab" data-bs-toggle="tab" href="#odi" role="tab" aria-controls="odi" aria-selected="false">ODI</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="t20-tab" data-bs-toggle="tab" href="#t20" role="tab" aria-controls="t20" aria-selected="false">T20I</a>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header"><h3>Bowling</h3></div>
-                <div class="card-body">
-                    <table class="table">
-                        <tr>
-                            <th>Tests Wickets</th>
-                            <td>{{ player.BOWLING_Tests_Wkts }}</td>
-                        </tr>
-                        <tr>
-                            <th>ODI Wickets</th>
-                            <td>{{ player.BOWLING_ODIs_Wkts }}</td>
-                        </tr>
-                        <tr>
-                            <th>T20I Wickets</th>
-                            <td>{{ player.BOWLING_T20Is_Wkts }}</td>
-                        </tr>
-                        <!-- Add more bowling stats as needed -->
-                    </table>
-                </div>
+        <div class="card-body tab-content" id="statsTabContent">
+            <!-- Test Stats Tab -->
+            <div class="tab-pane fade show active" id="test" role="tabpanel" aria-labelledby="test-tab">
+                <h4>Batting Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BATTING_Tests_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BATTING_Tests_Inns) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BATTING_Tests_Runs) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BATTING_Tests_Ave }}</td>
+                    </tr>
+                    <tr>
+                        <th>BF</th>
+                        <td>{{ format_stat(player.BATTING_Tests_BF) }}</td>
+                        <th>SR</th>
+                        <td>{{ player.BATTING_Tests_SR }}</td>
+                        <th>100s</th>
+                        <td>{{ format_stat(player.BATTING_Tests_100) }}</td>
+                        <th>50s</th>
+                        <td>{{ format_stat(player.BATTING_Tests_50) }}</td>
+                    </tr>
+                    <tr>
+                        <th>4s</th>
+                        <td>{{ format_stat(player.BATTING_Tests_4s) }}</td>
+                        <th>6s</th>
+                        <td>{{ format_stat(player.BATTING_Tests_6s) }}</td>
+                        <th>Catches</th>
+                        <td>{{ format_stat(player.BATTING_Tests_Ct) }}</td>
+                        <th>Stumpings</th>
+                        <td>{{ format_stat(player.BATTING_Tests_St) }}</td>
+                    </tr>
+                </table>
+                
+                <h4>Bowling Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_Inns) }}</td>
+                        <th>Balls</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_Balls) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_Runs) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Wkts</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_Wkts) }}</td>
+                        <th>BBI</th>
+                        <td>{{ best_bowling(player.BOWLING_Tests_BBI, player.BOWLING_Tests_BBM) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BOWLING_Tests_Ave }}</td>
+                        <th>Econ</th>
+                        <td>{{ player.BOWLING_Tests_Econ }}</td>
+                    </tr>
+                    <tr>
+                        <th>SR</th>
+                        <td>{{ player.BOWLING_Tests_SR }}</td>
+                        <th>4w</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_4w) }}</td>
+                        <th>5w</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_5w) }}</td>
+                        <th>10w</th>
+                        <td>{{ format_stat(player.BOWLING_Tests_10) }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- ODI Stats Tab -->
+            <div class="tab-pane fade" id="odi" role="tabpanel" aria-labelledby="odi-tab">
+                <h4>Batting Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_Inns) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_Runs) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BATTING_ODIs_Ave }}</td>
+                    </tr>
+                    <tr>
+                        <th>BF</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_BF) }}</td>
+                        <th>SR</th>
+                        <td>{{ player.BATTING_ODIs_SR }}</td>
+                        <th>100s</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_100) }}</td>
+                        <th>50s</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_50) }}</td>
+                    </tr>
+                    <tr>
+                        <th>4s</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_4s) }}</td>
+                        <th>6s</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_6s) }}</td>
+                        <th>Catches</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_Ct) }}</td>
+                        <th>Stumpings</th>
+                        <td>{{ format_stat(player.BATTING_ODIs_St) }}</td>
+                    </tr>
+                </table>
+                
+                <h4>Bowling Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_Inns) }}</td>
+                        <th>Balls</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_Balls) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_Runs) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Wkts</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_Wkts) }}</td>
+                        <th>BBI</th>
+                        <td>{{ best_bowling(player.BOWLING_ODIs_BBI, player.BOWLING_ODIs_BBM) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BOWLING_ODIs_Ave }}</td>
+                        <th>Econ</th>
+                        <td>{{ player.BOWLING_ODIs_Econ }}</td>
+                    </tr>
+                    <tr>
+                        <th>SR</th>
+                        <td>{{ player.BOWLING_ODIs_SR }}</td>
+                        <th>4w</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_4w) }}</td>
+                        <th>5w</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_5w) }}</td>
+                        <th>10w</th>
+                        <td>{{ format_stat(player.BOWLING_ODIs_10) }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- T20I Stats Tab -->
+            <div class="tab-pane fade" id="t20" role="tabpanel" aria-labelledby="t20-tab">
+                <h4>Batting Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_Inns) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_Runs) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BATTING_T20Is_Ave }}</td>
+                    </tr>
+                    <tr>
+                        <th>BF</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_BF) }}</td>
+                        <th>SR</th>
+                        <td>{{ player.BATTING_T20Is_SR }}</td>
+                        <th>100s</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_100) }}</td>
+                        <th>50s</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_50) }}</td>
+                    </tr>
+                    <tr>
+                        <th>4s</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_4s) }}</td>
+                        <th>6s</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_6s) }}</td>
+                        <th>Catches</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_Ct) }}</td>
+                        <th>Stumpings</th>
+                        <td>{{ format_stat(player.BATTING_T20Is_St) }}</td>
+                    </tr>
+                </table>
+                
+                <h4>Bowling Stats</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Mat</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_Mat) }}</td>
+                        <th>Inns</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_Inns) }}</td>
+                        <th>Balls</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_Balls) }}</td>
+                        <th>Runs</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_Runs) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Wkts</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_Wkts) }}</td>
+                        <th>BBI</th>
+                        <td>{{ best_bowling(player.BOWLING_T20Is_BBI, player.BOWLING_T20Is_BBM) }}</td>
+                        <th>Ave</th>
+                        <td>{{ player.BOWLING_T20Is_Ave }}</td>
+                        <th>Econ</th>
+                        <td>{{ player.BOWLING_T20Is_Econ }}</td>
+                    </tr>
+                    <tr>
+                        <th>SR</th>
+                        <td>{{ player.BOWLING_T20Is_SR }}</td>
+                        <th>4w</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_4w) }}</td>
+                        <th>5w</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_5w) }}</td>
+                        <th>10w</th>
+                        <td>{{ format_stat(player.BOWLING_T20Is_10) }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>

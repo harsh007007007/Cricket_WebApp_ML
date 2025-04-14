@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Player Performance Predictions</h1>
+    <p>This table shows the ensemble predicted Test runs along with a confidence score, as well as the individual model predictions.</p>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Predicted Runs (Ensemble)</th>
+                <th>Confidence</th>
+                <th>Individual Predictions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in predictions %}
+            <tr>
+                <td><a href="/player/{{ p.ID }}" class="player-link">{{ p.NAME }}</a></td>
+                <td>{{ p.Predicted_Runs|round }}</td>
+                <td>{{ (p.Confidence * 100)|round }}%</td>
+                <td>
+                    {% for key, value in p.Individual.items() %}
+                        <strong>{{ key }}:</strong> {{ value|round }}<br>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Model Explanations</h2>
+    <div class="accordion" id="modelExplanations">
+        {% for name, desc in model_explanations.items() %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                    {{ name }}
+                </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#modelExplanations">
+                <div class="accordion-body">
+                    {{ desc }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <p class="mt-4">You can also view detailed visualizations: 
+       <a href="{{ url_for('viz_files', filename='model_predictions_comparison.html') }}">Prediction Comparison</a> | 
+       <a href="{{ url_for('viz_files', filename='model_explanations.html') }}">Model Explanations</a>
+    </p>
+</div>
+{% endblock %}

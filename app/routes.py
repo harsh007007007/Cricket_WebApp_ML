@@ -8,7 +8,7 @@ import joblib
 from app import app
 from app.ML.ml_models import CricketPerformanceModel
 
-# Base directory (one level above app/)
+# Set the project base directory (one level above app/)
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Load datasets
@@ -16,7 +16,7 @@ df = pd.read_csv(os.path.join(base_dir, 'data', 'flattened_cricket_data.csv'), l
 with open(os.path.join(base_dir, 'data', 'structured_cricket_data.json')) as f:
     players_json = json.load(f)
 
-# Load or train model
+# Load or train the model
 model_path = os.path.join(base_dir, 'models', 'performance_model.pkl')
 os.makedirs(os.path.dirname(model_path), exist_ok=True)
 
@@ -30,8 +30,13 @@ except Exception as e:
     joblib.dump(model, model_path)
     print("[INFO] New model trained and saved.")
 
+# ------------------------------
+# Route Definitions
+# ------------------------------
+
 @app.route('/')
 def home():
+    # Default to showing Test stats analysis
     return format_analysis('test')
 
 @app.route('/analysis/<format_type>')
@@ -58,7 +63,7 @@ def format_analysis(format_type):
 
 @app.route('/players')
 def player_list():
-    # Filter to show only significant players, e.g., those with at least 10 matches.
+    # Filter to show only significant players (e.g., players with at least 10 matches in any format)
     def filter_significant(players):
         significant = []
         for p in players:
@@ -70,7 +75,7 @@ def player_list():
             except Exception:
                 continue
         return significant
-    
+
     significant_players = filter_significant(players_json)
     random.shuffle(significant_players)
     selected_players = significant_players[:15]
@@ -78,23 +83,22 @@ def player_list():
 
 @app.route('/player/<int:player_id>')
 def player_profile(player_id):
-    # Find the player by unique ID.
+    # Find the player by unique ID
     player = next((p for p in players_json if int(p['ID']) == player_id), None)
     if not player:
         return render_template('404.html'), 404
 
     features = model.prepare_features(pd.DataFrame([player]))
-    # Use clustering if available; otherwise, just set a default value.
+    # Use clustering if available; otherwise, set to empty
     try:
         clusters = model.predict_cluster(features)
     except Exception:
         clusters = []
     
-    # If find_similar_players is not implemented, return an empty list.
+    # If model.find_similar_players isn't implemented, simply set an empty list
+    similar_players = []
     if hasattr(model, 'find_similar_players'):
-         similar_players = model.find_similar_players(features, players_json)
-    else:
-         similar_players = []
+        similar_players = model.find_similar_players(features, players_json)
     
     return render_template('player.html',
                            player=player,
@@ -107,11 +111,11 @@ def search_players():
     results = []
     if query:
         for p in players_json:
-            # Get the player name safely; convert non-string values to string
+            # Convert the player name safely to a string
             name_val = p.get('NAME', '')
             if name_val is None:
                 continue
-            name_str = str(name_val).strip()  # Ensure it's a string
+            name_str = str(name_val).strip()
             if query in name_str.lower():
                 results.append({
                     'ID': p.get('ID', ''),
@@ -120,20 +124,86 @@ def search_players():
                 })
     return jsonify(results[:10])
 
+@app.route('/predictions')
+def predictions():
+    # Filter significant players for predictions (e.g., those with at least 10 matches)
+    def filter_significant(players):
+        significant = []
+        for p in players:
+            try:
+                if (float(p.get('BATTING_Tests_Mat', 0)) >= 10 or
+                    float(p.get('BATTING_ODIs_Mat', 0)) >= 10 or
+                    float(p.get('BATTING_T20Is_Mat', 0)) >= 10):
+                    significant.append(p)
+            except Exception:
+                continue
+        return significant
+
+    significant_players = filter_significant(players_json)[:20]
+    predictions_list = []
+    for p in significant_players:
+        features_p = model.prepare_features(pd.DataFrame([p]))
+        pred = model.predict_performance(features_p)
+        predictions_list.append({
+            'ID': p.get('ID'),
+            'NAME': p.get('NAME'),
+            'Predicted_Runs': pred["ensemble"],
+            'Confidence': pred["confidence"],
+            'Individual': pred["individual"]
+        })
+    # Optionally sort predictions by ensemble prediction descending
+    predictions_list = sorted(predictions_list, key=lambda x: x['Predicted_Runs'], reverse=True)
+    return render_template('predictions.html',
+                           predictions=predictions_list,
+                           model_explanations=model.get_model_descriptions())
+
 @app.route('/api/player/<int:player_id>/predict')
 def predict_performance(player_id):
+    # Use the ensemble model to predict for an individual player
     player = next((p for p in players_json if int(p['ID']) == player_id), None)
     if not player:
         return jsonify({'error': 'Player not found'}), 404
-
     features = model.prepare_features(pd.DataFrame([player]))
-    prediction = model.predict_performance(features)
+    preds = model.predict_performance(features)
     return jsonify({
         'name': player['NAME'],
-        'predicted_runs': prediction[0],
-        'confidence': prediction[1]
+        'ensemble_predicted_runs': preds["ensemble"],
+        'confidence': preds["confidence"],
+        'individual_predictions': preds["individual"]
     })
 
 @app.route('/viz/<path:filename>')
 def viz_files(filename):
     return send_from_directory(os.path.join(app.static_folder, 'viz'), filename)
+
+@app.route('/predictions_v2')
+def predictions_v2():
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    # Load specialized models
+    batsman_model = joblib.load(os.path.join(base_dir, 'models', 'batsman_model.pkl'))
+    bowler_model = joblib.load(os.path.join(base_dir, 'models', 'bowler_model.pkl'))
+    allrounder_model = joblib.load(os.path.join(base_dir, 'models', 'allrounder_model.pkl'))
+    
+    # For demonstration, use a subset of players
+    demo_players = players_json[:20]
+    results = []
+    for p in demo_players:
+        role = p.get('Playing role', '').lower()
+        df_player = pd.DataFrame([p])
+        if 'bat' in role:
+            pred = batsman_model.predict(df_player)
+            label = f"Batsman Predicted Runs: {pred:.2f}"
+        elif 'bowl' in role:
+            pred = bowler_model.predict(df_player)
+            label = f"Bowler Prediction (>=2 wickets): {bool(pred)}"
+        elif 'allrounder' in role or p.get('is_allrounder'):
+            pred = allrounder_model.predict(df_player)
+            label = f"All-rounder High Impact: {bool(pred)}"
+        else:
+            label = "No specialized model"
+        results.append({
+            'Player': p.get('NAME'),
+            'Role': role,
+            'Prediction': label
+        })
+    return render_template('predictions_v2.html', predictions=results)
