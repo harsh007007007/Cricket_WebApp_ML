@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Players</h1>
+    
+    <!-- Search Bar with Suggestions -->
+    <div class="mb-3 position-relative">
+        <input type="text" id="playerSearch" class="form-control" placeholder="Search for a player...">
+        <!-- Suggestions Dropdown -->
+        <ul class="list-group position-absolute w-100" id="searchResults" style="z-index: 999; max-height: 300px; overflow-y: auto;"></ul>
+    </div>
+    
+    <!-- Curated Players List -->
+    <ul class="list-group" id="playersList">
+    {% for player in players %}
+        <li class="list-group-item">
+            <a href="/player/{{ player.ID }}" class="player-link">{{ player.NAME }}</a>
+            <span class="text-muted"> - {{ player.COUNTRY }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+
+<script>
+    const searchInput = document.getElementById('playerSearch');
+    const searchResults = document.getElementById('searchResults');
+
+    // Function to render suggestions
+    function renderSuggestions(data) {
+        if (data.length === 0) {
+            searchResults.innerHTML = '<li class="list-group-item">No results found</li>';
+            return;
+        }
+        let html = '';
+        data.forEach(player => {
+            html += `
+                <li class="list-group-item">
+                    <a href="/player/${player.ID}" class="player-link">${player.NAME} - ${player.COUNTRY}</a>
+                </li>`;
+        });
+        searchResults.innerHTML = html;
+    }
+
+    // Fetch suggestions as user types
+    searchInput.addEventListener('input', async function() {
+        const query = this.value.trim();
+        if (query.length < 1) {
+            searchResults.innerHTML = '';
+            return;
+        }
+        
+        try {
+            const resp = await fetch(`/api/search_players?q=${encodeURIComponent(query)}`);
+            if (!resp.ok) {
+                console.error('Error fetching search results');
+                searchResults.innerHTML = '';
+                return;
+            }
+            const data = await resp.json();
+            renderSuggestions(data);
+        } catch (error) {
+            console.error('Error in search:', error);
+        }
+    });
+
+    // Handle "Enter" key: if there is at least one suggestion, navigate to its link
+    searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent the default form submission
+            const firstLink = searchResults.querySelector('li a');
+            if (firstLink) {
+                window.location.href = firstLink.href;
+            }
+        }
+    });
+
+    // Hide suggestions when clicking outside the search box
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target)) {
+            searchResults.innerHTML = '';
+        }
+    });
+</script>
+{% endblock %}

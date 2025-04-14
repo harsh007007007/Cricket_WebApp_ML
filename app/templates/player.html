@@ -4,69 +4,95 @@
 <div class="container player-profile">
     <div class="player-header mb-4 p-3 bg-light rounded">
         <h1>{{ player.NAME }} <small class="text-muted">{{ player.COUNTRY }}</small></h1>
-        <p class="text-muted">{{ player.Playing_Role }}</p>
+        <p class="text-muted">{{ player['Playing role'] }}</p>
         
-        {% if clusters %}
-        <div class="badge bg-info">Cluster #{{ clusters }}</div>
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <strong>Born:</strong> {{ player.Born }}
+            </div>
+            <div class="col-md-6">
+                <strong>Major Teams:</strong> {{ player['Major teams'] }}
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <strong>Nickname:</strong> {{ player.Nickname }}
+            </div>
+            <div class="col-md-6">
+                <strong>Height:</strong> {{ player.Height }}
+            </div>
+        </div>
+        
+        {% if player['In a nutshell'] %}
+        <p class="mt-3">
+            <strong>In a nutshell:</strong> {{ player['In a nutshell'] }}
+        </p>
         {% endif %}
     </div>
 
+    <!-- Batting / Bowling Stats -->
     <div class="row">
         <div class="col-md-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Batting</h3>
-                </div>
+                <div class="card-header"><h3>Batting</h3></div>
                 <div class="card-body">
                     <table class="table">
-                        <!-- Existing batting table -->
+                        <tr>
+                            <th>Tests Runs</th>
+                            <td>{{ player.BATTING_Tests_Runs }}</td>
+                        </tr>
+                        <tr>
+                            <th>ODI Runs</th>
+                            <td>{{ player.BATTING_ODIs_Runs }}</td>
+                        </tr>
+                        <tr>
+                            <th>T20I Runs</th>
+                            <td>{{ player.BATTING_T20Is_Runs }}</td>
+                        </tr>
+                        <!-- Add more batting stats as needed -->
                     </table>
                 </div>
             </div>
         </div>
-        
         <div class="col-md-6">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Bowling</h3>
-                </div>
+                <div class="card-header"><h3>Bowling</h3></div>
                 <div class="card-body">
                     <table class="table">
-                        <!-- Existing bowling table -->
+                        <tr>
+                            <th>Tests Wickets</th>
+                            <td>{{ player.BOWLING_Tests_Wkts }}</td>
+                        </tr>
+                        <tr>
+                            <th>ODI Wickets</th>
+                            <td>{{ player.BOWLING_ODIs_Wkts }}</td>
+                        </tr>
+                        <tr>
+                            <th>T20I Wickets</th>
+                            <td>{{ player.BOWLING_T20Is_Wkts }}</td>
+                        </tr>
+                        <!-- Add more bowling stats as needed -->
                     </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- New ML Insights Section -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h3>Performance Insights</h3>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Similar Players</h5>
-                    <div class="list-group">
-                        {% for p in similar_players %}
-                        <a href="/player/{{ p.NAME }}" class="list-group-item list-group-item-action">
-                            {{ p.NAME }} ({{ p.COUNTRY }})
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="viz-container">
-                        <iframe src="{{ url_for('viz_files', filename='player_' + player.NAME + '_cluster.html') }}" 
-                                style="width:100%; height:300px; border:none;"></iframe>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    {% if player.is_allrounder %}
+    <!-- Similar Players Section -->
+    <div class="card mb-4">
+        <div class="card-header"><h3>Similar Players</h3></div>
+        <div class="card-body">
+            <div class="list-group">
+                {% for p in similar_players %}
+                <a href="/player/{{ p.ID }}" class="list-group-item list-group-item-action">
+                    {{ p.NAME }} ({{ p.COUNTRY }})
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    {% if player.get('is_allrounder') %}
     <div class="alert alert-success">All-Rounder Status: Confirmed</div>
     {% endif %}
 </div>

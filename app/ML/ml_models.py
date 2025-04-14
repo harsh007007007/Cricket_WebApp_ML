@@ -64,19 +64,35 @@ class CricketPerformanceModel:
         pred = self.regressor.predict(X)[0]
         return [pred, 0.8]  # Prediction and dummy confidence
     
-    def get_top_performers(self, format_type, df, n=10):
-        format_map = {
-            'test': 'Tests',
-            'odi': 'ODIs',
-            't20': 'T20Is'
-        }
-        
-        if format_type.lower() not in format_map:
-            raise ValueError(f"Invalid format: {format_type}")
-        
-        col_suffix = format_map[format_type.lower()]
-        
+    def get_top_performers(self, format_type, df):
+        # Example logic – adjust column names as appropriate
+        if format_type == 'test':
+            # Sort by test runs (descending) to get top 10
+            df_sorted_batsmen = df.dropna(subset=['BATTING_Tests_Runs']).sort_values('BATTING_Tests_Runs', ascending=False)
+            top_batsmen_df = df_sorted_batsmen.head(10)
+
+            df_sorted_bowlers = df.dropna(subset=['BOWLING_Tests_Wkts']).sort_values('BOWLING_Tests_Wkts', ascending=False)
+            top_bowlers_df = df_sorted_bowlers.head(10)
+
+        elif format_type == 'odi':
+            df_sorted_batsmen = df.dropna(subset=['BATTING_ODIs_Runs']).sort_values('BATTING_ODIs_Runs', ascending=False)
+            top_batsmen_df = df_sorted_batsmen.head(10)
+
+            df_sorted_bowlers = df.dropna(subset=['BOWLING_ODIs_Wkts']).sort_values('BOWLING_ODIs_Wkts', ascending=False)
+            top_bowlers_df = df_sorted_bowlers.head(10)
+
+        elif format_type == 't20':
+            df_sorted_batsmen = df.dropna(subset=['BATTING_T20Is_Runs']).sort_values('BATTING_T20Is_Runs', ascending=False)
+            top_batsmen_df = df_sorted_batsmen.head(10)
+
+            df_sorted_bowlers = df.dropna(subset=['BOWLING_T20Is_Wkts']).sort_values('BOWLING_T20Is_Wkts', ascending=False)
+            top_bowlers_df = df_sorted_bowlers.head(10)
+
+        # Convert these DataFrame rows to dictionaries for the template
+        top_batsmen = top_batsmen_df.to_dict('records')
+        top_bowlers = top_bowlers_df.to_dict('records')
+
         return {
-            'batsmen': df.nlargest(n, f'BATTING_{col_suffix}_Runs')['NAME'].tolist(),
-            'bowlers': df.nlargest(n, f'BOWLING_{col_suffix}_Wkts')['NAME'].tolist()
-            }
+            'batsmen': top_batsmen,
+            'bowlers': top_bowlers
+        }
