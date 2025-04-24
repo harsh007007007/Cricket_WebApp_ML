@@ -1,5 +1,4 @@
-# Cricket End-To-End Website with ML integration.
-# Cricket Insights Web App
+# Cricket End-To-End Website with ML integration
 
 A Flask-powered web application for exploring and analyzing international cricket statistics. The project provides interactive visualizations, player and team profiles, and initial machine learning predictions for player performance.
 
